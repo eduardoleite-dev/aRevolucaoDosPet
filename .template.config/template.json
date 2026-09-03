@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json.schemastorage.org/template",
+  "author": "Seu Nome",
+  "classifications": ["Web", "API", "Arquitetura Limpa"],
+  "identity": "ArquiteturaBaseApi.Template",
+  "name": "Arquitetura Base API .NET 10",
+  "shortName": "baseapi",
+  "sourceName": "ArquiteturaBaseApi",
+  "guids": [],
+  "primaryOutputFiles": []
+}
