@@ -1,6 +1,6 @@
-using ArquiteturaBaseApi.DTOs;
+using aRevolucaoDosPet.DTOs;
 
-namespace ArquiteturaBaseApi.Services.Interfaces;
+namespace aRevolucaoDosPet.Services.Interfaces;
 
 public interface IAuthService
 {

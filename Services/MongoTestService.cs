@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using ArquiteturaBaseApi.Services.Interfaces;
+using aRevolucaoDosPet.Services.Interfaces;
 
-namespace ArquiteturaBaseApi.Services;
+namespace aRevolucaoDosPet.Services;
 public class MongoTestService : IMongoTestService
 {
     private readonly IMongoDatabase _database;

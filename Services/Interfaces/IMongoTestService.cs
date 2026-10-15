@@ -1,4 +1,4 @@
-namespace ArquiteturaBaseApi.Services.Interfaces;
+namespace aRevolucaoDosPet.Services.Interfaces;
 
 public interface IMongoTestService
 {

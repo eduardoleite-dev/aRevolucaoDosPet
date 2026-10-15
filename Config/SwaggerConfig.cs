@@ -1,6 +1,6 @@
 using Microsoft.OpenApi;
 
-namespace ArquiteturaBaseApi.Config;
+namespace aRevolucaoDosPet.Config;
 
 public static class SwaggerConfig
 {

@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace ArquiteturaBaseApi.Models;
+namespace aRevolucaoDosPet.Models;
 
 public class User
 {

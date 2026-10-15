@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
-namespace ArquiteturaBaseApi.Config;
+namespace aRevolucaoDosPet.Config;
 
 public static class MongoConfig
 {

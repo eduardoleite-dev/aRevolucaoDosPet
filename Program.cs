@@ -1,4 +1,4 @@
-using ArquiteturaBaseApi.Config;
+using aRevolucaoDosPet.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();

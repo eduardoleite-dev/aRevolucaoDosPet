@@ -3,11 +3,11 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
-using ArquiteturaBaseApi.DTOs;
-using ArquiteturaBaseApi.Models;
-using ArquiteturaBaseApi.Services.Interfaces;
+using aRevolucaoDosPet.DTOs;
+using aRevolucaoDosPet.Models;
+using aRevolucaoDosPet.Services.Interfaces;
 
-namespace ArquiteturaBaseApi.Services;
+namespace aRevolucaoDosPet.Services;
 
 public class AuthService : IAuthService
 {

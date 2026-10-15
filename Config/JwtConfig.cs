@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace ArquiteturaBaseApi.Config;
+namespace aRevolucaoDosPet.Config;
 
 public static class JwtConfig
 {

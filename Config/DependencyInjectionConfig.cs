@@ -1,7 +1,7 @@
-using ArquiteturaBaseApi.Services;
-using ArquiteturaBaseApi.Services.Interfaces;
+using aRevolucaoDosPet.Services;
+using aRevolucaoDosPet.Services.Interfaces;
 
-namespace ArquiteturaBaseApi.Config;
+namespace aRevolucaoDosPet.Config;
 
 public static class DependencyInjectionConfig
 {

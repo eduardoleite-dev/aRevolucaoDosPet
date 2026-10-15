@@ -1,4 +1,4 @@
-# ArquiteturaBaseApi - Template para Web API .NET 10
+# aRevolucaoDosPet - Template para Web API .NET 10
 
 Este repositório contém uma arquitetura base para criação de APIs RESTful em .NET 10, com MongoDB, JWT e organização em camadas. Além disso, ele é empacotado como um template personalizado do .NET, permitindo criar novos projetos com um único comando.
 
@@ -15,8 +15,8 @@ dotnet --version
 Crie o projeto Web API e entre na pasta criada:
 
 ```powershell
-dotnet new webapi -n ArquiteturaBaseApi
-Set-Location ArquiteturaBaseApi
+dotnet new webapi -n aRevolucaoDosPet
+Set-Location aRevolucaoDosPet
 ```
 
 Adicione os pacotes utilizados pela aplicação:
@@ -52,7 +52,7 @@ dotnet run
 
 ## 2. Criar um Template Próprio do .NET (`dotnet new`)
 
-Essa é a forma oficial e mais integrada ao ecossistema .NET. Você transforma a sua `ArquiteturaBaseApi` em um template personalizado que pode ser chamado via terminal com um simples comando (`dotnet new minha-api`).
+Essa é a forma oficial e mais integrada ao ecossistema .NET. Você transforma a sua `aRevolucaoDosPet` em um template personalizado que pode ser chamado via terminal com um simples comando (`dotnet new minha-api`).
 
 ### Passo a passo:
 
@@ -65,16 +65,16 @@ Essa é a forma oficial e mais integrada ao ecossistema .NET. Você transforma a
      "$schema": "http://json.schemastorage.org/template",
      "author": "Seu Nome",
      "classifications": ["Web", "API", "Arquitetura Limpa"],
-     "identity": "ArquiteturaBaseApi.Template",
+     "identity": "aRevolucaoDosPet.Template",
      "name": "Arquitetura Base API .NET 10",
      "shortName": "baseapi",
-     "sourceName": "ArquiteturaBaseApi",
+     "sourceName": "aRevolucaoDosPet",
      "guids": [],
      "primaryOutputFiles": []
    }
    ```
 
-   > O `sourceName` é mágico: quando você criar um projeto novo, ele substitui automaticamente o nome "ArquiteturaBaseApi" pelo nome do seu novo projeto em todos os namespaces e arquivos.
+   > O `sourceName` é mágico: quando você criar um projeto novo, ele substitui automaticamente o nome "aRevolucaoDosPet" pelo nome do seu novo projeto em todos os namespaces e arquivos.
 
 3. **Instale o template localmente**: Abra o terminal na pasta do projeto e execute:
 
@@ -94,7 +94,7 @@ Essa é a forma oficial e mais integrada ao ecossistema .NET. Você transforma a
 
 | Comando | Descrição |
 |---------|-----------|
-| `dotnet new webapi -n ArquiteturaBaseApi` | Cria o projeto base |
+| `dotnet new webapi -n aRevolucaoDosPet` | Cria o projeto base |
 | `dotnet add package ...` | Adiciona os pacotes necessários |
 | `dotnet restore` | Restaura dependências |
 | `dotnet build` | Compila o projeto |

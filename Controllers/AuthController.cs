@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using ArquiteturaBaseApi.DTOs;
-using ArquiteturaBaseApi.Services.Interfaces;
+using aRevolucaoDosPet.DTOs;
+using aRevolucaoDosPet.Services.Interfaces;
 
-namespace ArquiteturaBaseApi.Controllers;
+namespace aRevolucaoDosPet.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

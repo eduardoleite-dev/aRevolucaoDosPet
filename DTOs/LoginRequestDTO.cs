@@ -1,4 +1,4 @@
-namespace ArquiteturaBaseApi.DTOs;
+namespace aRevolucaoDosPet.DTOs;
 
 public class LoginRequest
 {
