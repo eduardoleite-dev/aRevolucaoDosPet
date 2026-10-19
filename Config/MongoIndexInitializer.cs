@@ -10,6 +10,10 @@ public class MongoIndexInitializer : IHostedService
     private readonly IMongoCollection<UserSettings> _userSettings;
     private readonly IMongoCollection<Pet> _pets;
     private readonly IMongoCollection<PetFollower> _petFollowers;
+    private readonly IMongoCollection<Post> _posts;
+    private readonly IMongoCollection<PostReaction> _postReactions;
+    private readonly IMongoCollection<Comment> _comments;
+    private readonly IMongoCollection<Story> _stories;
 
     public MongoIndexInitializer(IMongoDatabase database)
     {
@@ -17,6 +21,10 @@ public class MongoIndexInitializer : IHostedService
         _userSettings = database.GetCollection<UserSettings>("UserSettings");
         _pets = database.GetCollection<Pet>("Pets");
         _petFollowers = database.GetCollection<PetFollower>("PetFollowers");
+        _posts = database.GetCollection<Post>("Posts");
+        _postReactions = database.GetCollection<PostReaction>("PostReactions");
+        _comments = database.GetCollection<Comment>("Comments");
+        _stories = database.GetCollection<Story>("Stories");
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -105,6 +113,56 @@ public class MongoIndexInitializer : IHostedService
                 })
         };
         await _petFollowers.Indexes.CreateManyAsync(petFollowerIndexes, cancellationToken);
+
+        var postIndexes = new[]
+        {
+            new CreateIndexModel<Post>(
+                Builders<Post>.IndexKeys.Ascending(post => post.PetId),
+                new CreateIndexOptions { Name = "ix_posts_pet_id" }),
+            new CreateIndexModel<Post>(
+                Builders<Post>.IndexKeys.Descending(post => post.CreatedAt),
+                new CreateIndexOptions { Name = "ix_posts_created_at" }),
+            new CreateIndexModel<Post>(
+                Builders<Post>.IndexKeys.Geo2DSphere(post => post.Location),
+                new CreateIndexOptions { Name = "ix_posts_location_2dsphere" }),
+            new CreateIndexModel<Post>(
+                Builders<Post>.IndexKeys.Ascending(post => post.Hashtags),
+                new CreateIndexOptions { Name = "ix_posts_hashtags" })
+        };
+        await _posts.Indexes.CreateManyAsync(postIndexes, cancellationToken);
+
+        var postReactionIndexes = new[]
+        {
+            new CreateIndexModel<PostReaction>(
+                Builders<PostReaction>.IndexKeys
+                    .Ascending(reaction => reaction.PostId)
+                    .Ascending(reaction => reaction.UserId)
+                    .Ascending(reaction => reaction.PetId),
+                new CreateIndexOptions { Unique = true, Name = "ux_post_reactions_post_user_pet" })
+        };
+        await _postReactions.Indexes.CreateManyAsync(postReactionIndexes, cancellationToken);
+
+        var commentIndexes = new[]
+        {
+            new CreateIndexModel<Comment>(
+                Builders<Comment>.IndexKeys.Ascending(comment => comment.PostId),
+                new CreateIndexOptions { Name = "ix_comments_post_id" }),
+            new CreateIndexModel<Comment>(
+                Builders<Comment>.IndexKeys.Ascending(comment => comment.ParentId),
+                new CreateIndexOptions { Name = "ix_comments_parent_id" })
+        };
+        await _comments.Indexes.CreateManyAsync(commentIndexes, cancellationToken);
+
+        var storyIndexes = new[]
+        {
+            new CreateIndexModel<Story>(
+                Builders<Story>.IndexKeys.Ascending(story => story.PetId),
+                new CreateIndexOptions { Name = "ix_stories_pet_id" }),
+            new CreateIndexModel<Story>(
+                Builders<Story>.IndexKeys.Ascending(story => story.ExpiresAt),
+                new CreateIndexOptions { Name = "ttl_stories_expires_at", ExpireAfter = TimeSpan.Zero })
+        };
+        await _stories.Indexes.CreateManyAsync(storyIndexes, cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

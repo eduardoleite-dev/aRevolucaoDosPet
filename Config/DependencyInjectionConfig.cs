@@ -13,6 +13,10 @@ public static class DependencyInjectionConfig
         services.AddScoped<IUserSettingsService, UserSettingsService>();
         services.AddScoped<IPetService, PetService>();
         services.AddScoped<IPetFollowerService, PetFollowerService>();
+        services.AddScoped<IPostService, PostService>();
+        services.AddScoped<IPostReactionService, PostReactionService>();
+        services.AddScoped<ICommentService, CommentService>();
+        services.AddScoped<IStoryService, StoryService>();
         services.AddHostedService<MongoIndexInitializer>();
         return services;
     }

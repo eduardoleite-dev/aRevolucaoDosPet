@@ -39,7 +39,7 @@ public class PetWriteRequest
     public DateTime? BirthDate { get; set; }
     public DateTime? AdoptionDate { get; set; }
 
-    [Range(typeof(decimal), "0.01", "1000")]
+    [Range(0.01, 1000)]
     public decimal? WeightKg { get; set; }
 
     [EnumDataType(typeof(PetSize))]
@@ -133,10 +133,10 @@ public class PetSearchFilter
     public DateTime? AdoptionDateFrom { get; set; }
     public DateTime? AdoptionDateTo { get; set; }
 
-    [Range(typeof(decimal), "0", "1000")]
+    [Range(0, 1000)]
     public decimal? MinWeightKg { get; set; }
 
-    [Range(typeof(decimal), "0", "1000")]
+    [Range(0, 1000)]
     public decimal? MaxWeightKg { get; set; }
 
     public PetSize? Size { get; set; }
