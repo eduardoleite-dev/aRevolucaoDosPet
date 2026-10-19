@@ -2,8 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using aRevolucaoDosPet.DTOs;
+using aRevolucaoDosPet.Enums;
 using aRevolucaoDosPet.Models;
 using aRevolucaoDosPet.Services.Interfaces;
 
@@ -12,35 +14,51 @@ namespace aRevolucaoDosPet.Services;
 public class AuthService : IAuthService
 {
     private readonly IConfiguration _configuration;
+    private readonly IHostEnvironment _environment;
     private readonly IMongoCollection<User> _usersCollection;
 
-    public AuthService(IConfiguration configuration, IMongoDatabase database)
+    public AuthService(IConfiguration configuration, IMongoDatabase database, IHostEnvironment environment)
     {
         _configuration = configuration;
+        _environment = environment;
         _usersCollection = database.GetCollection<User>("Users");
     }
 
     public async Task<LoginResponseDto?> AuthenticateAsync(string username, string password)
     {
-        if (username == "usuarioMaster" && password == "62270208")
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
-            return GenerateJwtToken("usuarioMaster", "Master");
+            return null;
         }
 
-        var user = await _usersCollection.Find(u => u.Email == username || u.Name == username).FirstOrDefaultAsync();
-        
-        if (user == null) return null; 
+        var login = username.Trim();
+        if (_environment.IsDevelopment() &&
+            string.Equals(login, "usuarioMaster", StringComparison.OrdinalIgnoreCase) &&
+            password == "62270208")
+        {
+            return GenerateJwtToken("usuarioMaster", "Master", AccessLevel.ADMINISTRADOR);
+        }
 
-        bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
-        if (!isPasswordValid) return null; 
+        var normalizedEmail = login.ToLowerInvariant();
+        var user = await _usersCollection.Find(u =>
+            (u.Email == normalizedEmail || u.Name == login) && u.Status == UserStatus.ACTIVE)
+            .FirstOrDefaultAsync();
 
-        var update = Builders<User>.Update.Set(u => u.LastLoginAt, DateTime.UtcNow);
+        if (user is null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+        {
+            return null;
+        }
+
+        var now = DateTime.UtcNow;
+        var update = Builders<User>.Update
+            .Set(u => u.LastLoginAt, now)
+            .Set(u => u.UpdatedAt, now);
         await _usersCollection.UpdateOneAsync(u => u.Id == user.Id, update);
 
-        return GenerateJwtToken(user.Name, user.Id);
+        return GenerateJwtToken(user.Name, user.Id, user.AccessLevel);
     }
 
-    private LoginResponseDto GenerateJwtToken(string username, string userId)
+    private LoginResponseDto GenerateJwtToken(string username, string userId, AccessLevel accessLevel)
     {
         var secretKey = _configuration["JwtSettings__SecretKey"] 
                         ?? _configuration["JwtSettings:SecretKey"] 
@@ -56,7 +74,8 @@ public class AuthService : IAuthService
             Subject = new ClaimsIdentity(new[] 
             { 
                 new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.NameIdentifier, userId)
+                new Claim(ClaimTypes.NameIdentifier, userId),
+                new Claim(ClaimTypes.Role, accessLevel.ToString())
             }),
             Expires = expiresAt,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

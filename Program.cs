@@ -25,7 +25,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "GaesdeApi v1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "A revolução dos pets v1");
     c.RoutePrefix = string.Empty; 
 });
 
@@ -34,5 +34,4 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.Urls.Add("http://0.0.0.0:8080");
 app.Run();

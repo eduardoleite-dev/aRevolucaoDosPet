@@ -3,14 +3,14 @@ $ErrorActionPreference = "Stop"
 # ==========================================
 # VARIÁVEIS DE CONFIGURAÇÃO (Ajuste aqui)
 # ==========================================
-$AppName       = "Base"
-$ResourceGroup = "gaesde_group"
-$DllName       = "Base.dll"
+$AppName       = "aRevolucaoDosPet"
+$ResourceGroup = "pet_group"
+$DllName       = "aRevolucaoDosPet.dll"
 $PublishPath   = "./publish"
 $ZipName       = "./app.zip"
 $Configuration = "Release"
 
-Write-Host "=== Iniciando o processo de Build e Deploy para o Azure (Linux App Service) ===" -ForegroundColor Cyan
+Write-Host "=== Iniciando o processo de Build e Deploy para o Azure (App Service) ===" -ForegroundColor Cyan
 
 # 1. Limpa e publica a aplicação
 Write-Host "Compilando e publicando o projeto (.NET $Configuration)..." -ForegroundColor Yellow
