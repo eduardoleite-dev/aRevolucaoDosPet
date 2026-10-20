@@ -135,6 +135,30 @@ public enum DiaryMood
     SICK
 }
 
+public enum DiaryLevel
+{
+    LOW,
+    NORMAL,
+    HIGH
+}
+
+public enum StoolType
+{
+    NORMAL,
+    SOFT,
+    HARD,
+    DIARRHEA,
+    BLOOD
+}
+
+public enum UrineType
+{
+    NORMAL,
+    LITTLE,
+    MUCH,
+    BLOOD
+}
+
 public enum HeatCyclePhase
 {
     PROESTRUS,

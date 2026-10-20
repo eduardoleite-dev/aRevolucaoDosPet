@@ -14,6 +14,10 @@ public class MongoIndexInitializer : IHostedService
     private readonly IMongoCollection<PostReaction> _postReactions;
     private readonly IMongoCollection<Comment> _comments;
     private readonly IMongoCollection<Story> _stories;
+    private readonly IMongoCollection<Vaccine> _vaccines;
+    private readonly IMongoCollection<Appointment> _appointments;
+    private readonly IMongoCollection<WeightLog> _weightLogs;
+    private readonly IMongoCollection<DiaryEntry> _diaryEntries;
 
     public MongoIndexInitializer(IMongoDatabase database)
     {
@@ -25,6 +29,10 @@ public class MongoIndexInitializer : IHostedService
         _postReactions = database.GetCollection<PostReaction>("PostReactions");
         _comments = database.GetCollection<Comment>("Comments");
         _stories = database.GetCollection<Story>("Stories");
+        _vaccines = database.GetCollection<Vaccine>("Vaccines");
+        _appointments = database.GetCollection<Appointment>("Appointments");
+        _weightLogs = database.GetCollection<WeightLog>("WeightLogs");
+        _diaryEntries = database.GetCollection<DiaryEntry>("DiaryEntries");
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -163,6 +171,57 @@ public class MongoIndexInitializer : IHostedService
                 new CreateIndexOptions { Name = "ttl_stories_expires_at", ExpireAfter = TimeSpan.Zero })
         };
         await _stories.Indexes.CreateManyAsync(storyIndexes, cancellationToken);
+
+        var vaccineIndexes = new[]
+        {
+            new CreateIndexModel<Vaccine>(
+                Builders<Vaccine>.IndexKeys.Ascending(vaccine => vaccine.PetId),
+                new CreateIndexOptions { Name = "ix_vaccines_pet_id" }),
+            new CreateIndexModel<Vaccine>(
+                Builders<Vaccine>.IndexKeys.Ascending(vaccine => vaccine.NextDoseAt),
+                new CreateIndexOptions { Name = "ix_vaccines_next_dose_at" }),
+            new CreateIndexModel<Vaccine>(
+                Builders<Vaccine>.IndexKeys.Ascending(vaccine => vaccine.Status),
+                new CreateIndexOptions { Name = "ix_vaccines_status" })
+        };
+        await _vaccines.Indexes.CreateManyAsync(vaccineIndexes, cancellationToken);
+
+        var appointmentIndexes = new[]
+        {
+            new CreateIndexModel<Appointment>(
+                Builders<Appointment>.IndexKeys.Ascending(appointment => appointment.PetId),
+                new CreateIndexOptions { Name = "ix_appointments_pet_id" }),
+            new CreateIndexModel<Appointment>(
+                Builders<Appointment>.IndexKeys.Ascending(appointment => appointment.ScheduledAt),
+                new CreateIndexOptions { Name = "ix_appointments_scheduled_at" }),
+            new CreateIndexModel<Appointment>(
+                Builders<Appointment>.IndexKeys.Ascending(appointment => appointment.Status),
+                new CreateIndexOptions { Name = "ix_appointments_status" })
+        };
+        await _appointments.Indexes.CreateManyAsync(appointmentIndexes, cancellationToken);
+
+        var weightLogIndexes = new[]
+        {
+            new CreateIndexModel<WeightLog>(
+                Builders<WeightLog>.IndexKeys
+                    .Ascending(log => log.PetId)
+                    .Ascending(log => log.MeasuredAt),
+                new CreateIndexOptions { Name = "ix_weight_logs_pet_id_measured_at" })
+        };
+        await _weightLogs.Indexes.CreateManyAsync(weightLogIndexes, cancellationToken);
+
+        var diaryEntryIndexes = new[]
+        {
+            new CreateIndexModel<DiaryEntry>(
+                Builders<DiaryEntry>.IndexKeys
+                    .Ascending(entry => entry.PetId)
+                    .Descending(entry => entry.EntryDate),
+                new CreateIndexOptions { Name = "ix_diary_entries_pet_id_entry_date" }),
+            new CreateIndexModel<DiaryEntry>(
+                Builders<DiaryEntry>.IndexKeys.Ascending(entry => entry.Tags),
+                new CreateIndexOptions { Name = "ix_diary_entries_tags" })
+        };
+        await _diaryEntries.Indexes.CreateManyAsync(diaryEntryIndexes, cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

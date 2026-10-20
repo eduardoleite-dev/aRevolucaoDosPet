@@ -53,6 +53,7 @@ public class Pet
     public DateTime? AdoptionDate { get; set; }
 
     [BsonElement("weight_kg")]
+    [BsonRepresentation(BsonType.Decimal128)]
     public decimal? WeightKg { get; set; }
 
     [BsonElement("size")]
