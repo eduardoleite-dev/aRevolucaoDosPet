@@ -16,6 +16,7 @@ public class DiaryEntryService : IDiaryEntryService
     private readonly IMongoCollection<Pet> _pets;
     private readonly IMongoCollection<User> _users;
     private readonly IMongoCollection<PetFollower> _petFollowers;
+    private readonly IMongoCollection<Expense> _expenses;
 
     public DiaryEntryService(IMongoDatabase database)
     {
@@ -23,6 +24,7 @@ public class DiaryEntryService : IDiaryEntryService
         _pets = database.GetCollection<Pet>("Pets");
         _users = database.GetCollection<User>("Users");
         _petFollowers = database.GetCollection<PetFollower>("PetFollowers");
+        _expenses = database.GetCollection<Expense>("Expenses");
     }
 
     public async Task<DiaryEntryResponseDto> CreateAsync(
@@ -41,6 +43,7 @@ public class DiaryEntryService : IDiaryEntryService
         var authorExists = await _users.Find(user => user.Id == authorUserId && user.Status == UserStatus.ACTIVE)
             .AnyAsync(cancellationToken);
         if (!authorExists) throw new DiaryAuthorNotFoundException();
+        await ValidateRelatedExpenseAsync(request.RelatedExpenseId, request.PetId, cancellationToken);
 
         var now = DateTime.UtcNow;
         var entry = new DiaryEntry { PetId = request.PetId, AuthorUserId = authorUserId!, CreatedAt = now };
@@ -172,6 +175,7 @@ public class DiaryEntryService : IDiaryEntryService
         var entry = await FindEditableAsync(id, currentUserId, isAdministrator, cancellationToken);
         if (entry is null) return null;
 
+        await ValidateRelatedExpenseAsync(request.RelatedExpenseId, entry.PetId, cancellationToken);
         Apply(entry, request, DateTime.UtcNow);
         await _entries.ReplaceOneAsync(item => item.Id == id, entry, cancellationToken: cancellationToken);
         return ToResponse(entry);
@@ -269,6 +273,24 @@ public class DiaryEntryService : IDiaryEntryService
 
         if (result.Count > MaxListItems) throw new ArgumentException($"{field} aceita no máximo {MaxListItems} itens.");
         return result;
+    }
+
+    private async Task ValidateRelatedExpenseAsync(
+        string? relatedExpenseId,
+        string petId,
+        CancellationToken cancellationToken)
+    {
+        var expenseId = PetRecordHelper.NormalizeOptional(relatedExpenseId);
+        if (expenseId is null) return;
+        PetRecordHelper.EnsureObjectId(expenseId, "relatedExpenseId");
+
+        var existsForPet = await _expenses
+            .Find(expense => expense.Id == expenseId && expense.PetId == petId)
+            .AnyAsync(cancellationToken);
+        if (!existsForPet)
+        {
+            throw new ArgumentException("O gasto relacionado não existe ou pertence a outro pet.");
+        }
     }
 
     private static DiaryEntryResponseDto ToResponse(DiaryEntry entry) => new(

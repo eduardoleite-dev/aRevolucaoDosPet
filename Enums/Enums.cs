@@ -167,11 +167,46 @@ public enum HeatCyclePhase
     ANESTRUS
 }
 
+public enum ExpenseRecurrenceFrequency
+{
+    DAILY,
+    WEEKLY,
+    MONTHLY,
+    YEARLY
+}
+
+public enum PregnancyStatus
+{
+    ONGOING,
+    COMPLETED,
+    LOST
+}
+
 public enum WalkStatus
 {
     IN_PROGRESS,
     COMPLETED,
     CANCELED
+}
+
+public enum WalkInteractionType
+{
+    PLAYED,
+    SNIFFED,
+    BARKED,
+    IGNORED,
+    AGGRESSIVE
+}
+
+public enum PlaceType
+{
+    PARK,
+    SQUARE,
+    PET_SHOP,
+    VET,
+    CAFE,
+    DAYCARE,
+    GROOMING
 }
 
 public enum NotificationType

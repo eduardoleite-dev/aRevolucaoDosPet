@@ -18,6 +18,14 @@ public class MongoIndexInitializer : IHostedService
     private readonly IMongoCollection<Appointment> _appointments;
     private readonly IMongoCollection<WeightLog> _weightLogs;
     private readonly IMongoCollection<DiaryEntry> _diaryEntries;
+    private readonly IMongoCollection<Expense> _expenses;
+    private readonly IMongoCollection<HeatCycle> _heatCycles;
+    private readonly IMongoCollection<Pregnancy> _pregnancies;
+    private readonly IMongoCollection<Walk> _walks;
+    private readonly IMongoCollection<WalkEncounter> _walkEncounters;
+    private readonly IMongoCollection<Place> _places;
+    private readonly IMongoCollection<PlaceReview> _placeReviews;
+    private readonly IMongoCollection<Notification> _notifications;
 
     public MongoIndexInitializer(IMongoDatabase database)
     {
@@ -33,6 +41,14 @@ public class MongoIndexInitializer : IHostedService
         _appointments = database.GetCollection<Appointment>("Appointments");
         _weightLogs = database.GetCollection<WeightLog>("WeightLogs");
         _diaryEntries = database.GetCollection<DiaryEntry>("DiaryEntries");
+        _expenses = database.GetCollection<Expense>("Expenses");
+        _heatCycles = database.GetCollection<HeatCycle>("HeatCycles");
+        _pregnancies = database.GetCollection<Pregnancy>("Pregnancies");
+        _walks = database.GetCollection<Walk>("Walks");
+        _walkEncounters = database.GetCollection<WalkEncounter>("WalkEncounters");
+        _places = database.GetCollection<Place>("Places");
+        _placeReviews = database.GetCollection<PlaceReview>("PlaceReviews");
+        _notifications = database.GetCollection<Notification>("Notifications");
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -222,6 +238,80 @@ public class MongoIndexInitializer : IHostedService
                 new CreateIndexOptions { Name = "ix_diary_entries_tags" })
         };
         await _diaryEntries.Indexes.CreateManyAsync(diaryEntryIndexes, cancellationToken);
+
+        var expenseIndexes = new[]
+        {
+            new CreateIndexModel<Expense>(
+                Builders<Expense>.IndexKeys.Ascending(expense => expense.PetId).Ascending(expense => expense.ExpenseDate),
+                new CreateIndexOptions { Name = "ix_expenses_pet_id_expense_date" }),
+            new CreateIndexModel<Expense>(
+                Builders<Expense>.IndexKeys.Ascending(expense => expense.PetId).Ascending(expense => expense.Category),
+                new CreateIndexOptions { Name = "ix_expenses_pet_id_category" }),
+            new CreateIndexModel<Expense>(
+                Builders<Expense>.IndexKeys.Ascending(expense => expense.UserId),
+                new CreateIndexOptions { Name = "ix_expenses_user_id" })
+        };
+        await _expenses.Indexes.CreateManyAsync(expenseIndexes, cancellationToken);
+
+        var heatCycleIndexes = new[]
+        {
+            new CreateIndexModel<HeatCycle>(
+                Builders<HeatCycle>.IndexKeys.Ascending(cycle => cycle.PetId).Ascending(cycle => cycle.StartedAt),
+                new CreateIndexOptions { Name = "ix_heat_cycles_pet_id_started_at" })
+        };
+        await _heatCycles.Indexes.CreateManyAsync(heatCycleIndexes, cancellationToken);
+
+        var pregnancyIndexes = new[]
+        {
+            new CreateIndexModel<Pregnancy>(
+                Builders<Pregnancy>.IndexKeys.Ascending(pregnancy => pregnancy.PetId),
+                new CreateIndexOptions { Name = "ix_pregnancies_pet_id" }),
+            new CreateIndexModel<Pregnancy>(
+                Builders<Pregnancy>.IndexKeys.Ascending(pregnancy => pregnancy.Status),
+                new CreateIndexOptions { Name = "ix_pregnancies_status" })
+        };
+        await _pregnancies.Indexes.CreateManyAsync(pregnancyIndexes, cancellationToken);
+
+        var walkIndexes = new[]
+        {
+            new CreateIndexModel<Walk>(Builders<Walk>.IndexKeys.Ascending(walk => walk.PetId), new CreateIndexOptions { Name = "ix_walks_pet_id" }),
+            new CreateIndexModel<Walk>(Builders<Walk>.IndexKeys.Ascending(walk => walk.UserId), new CreateIndexOptions { Name = "ix_walks_user_id" }),
+            new CreateIndexModel<Walk>(Builders<Walk>.IndexKeys.Ascending(walk => walk.StartedAt), new CreateIndexOptions { Name = "ix_walks_started_at" }),
+            new CreateIndexModel<Walk>(Builders<Walk>.IndexKeys.Geo2DSphere(walk => walk.Route), new CreateIndexOptions { Name = "ix_walks_route_2dsphere" })
+        };
+        await _walks.Indexes.CreateManyAsync(walkIndexes, cancellationToken);
+
+        var walkEncounterIndexes = new[]
+        {
+            new CreateIndexModel<WalkEncounter>(Builders<WalkEncounter>.IndexKeys.Ascending(encounter => encounter.WalkId), new CreateIndexOptions { Name = "ix_walk_encounters_walk_id" }),
+            new CreateIndexModel<WalkEncounter>(Builders<WalkEncounter>.IndexKeys.Geo2DSphere(encounter => encounter.Location), new CreateIndexOptions { Name = "ix_walk_encounters_location_2dsphere" })
+        };
+        await _walkEncounters.Indexes.CreateManyAsync(walkEncounterIndexes, cancellationToken);
+
+        var placeIndexes = new[]
+        {
+            new CreateIndexModel<Place>(Builders<Place>.IndexKeys.Geo2DSphere(place => place.Location), new CreateIndexOptions { Name = "ix_places_location_2dsphere" }),
+            new CreateIndexModel<Place>(Builders<Place>.IndexKeys.Ascending(place => place.Type), new CreateIndexOptions { Name = "ix_places_type" }),
+            new CreateIndexModel<Place>(Builders<Place>.IndexKeys.Descending(place => place.AverageRating), new CreateIndexOptions { Name = "ix_places_average_rating" })
+        };
+        await _places.Indexes.CreateManyAsync(placeIndexes, cancellationToken);
+
+        var placeReviewIndexes = new[]
+        {
+            new CreateIndexModel<PlaceReview>(Builders<PlaceReview>.IndexKeys.Ascending(review => review.PlaceId).Ascending(review => review.UserId),
+                new CreateIndexOptions { Unique = true, Name = "ux_place_reviews_place_user" }),
+            new CreateIndexModel<PlaceReview>(Builders<PlaceReview>.IndexKeys.Ascending(review => review.PlaceId), new CreateIndexOptions { Name = "ix_place_reviews_place_id" })
+        };
+        await _placeReviews.Indexes.CreateManyAsync(placeReviewIndexes, cancellationToken);
+
+        var notificationIndexes = new[]
+        {
+            new CreateIndexModel<Notification>(Builders<Notification>.IndexKeys.Ascending(notification => notification.UserId).Ascending(notification => notification.IsRead),
+                new CreateIndexOptions { Name = "ix_notifications_user_is_read" }),
+            new CreateIndexModel<Notification>(Builders<Notification>.IndexKeys.Descending(notification => notification.CreatedAt),
+                new CreateIndexOptions { Name = "ix_notifications_created_at" })
+        };
+        await _notifications.Indexes.CreateManyAsync(notificationIndexes, cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
