@@ -8,7 +8,7 @@ public static class SwaggerConfig
     {
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "GaesdeApi", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "A revolução dos pets Api", Version = "v1" });
             
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
