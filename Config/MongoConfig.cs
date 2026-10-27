@@ -14,7 +14,8 @@ public static class MongoConfig
 
         var mongoUrl = MongoUrl.Create(connectionString);
         var mongoClient = new MongoClient(mongoUrl);
-        var database = mongoClient.GetDatabase(mongoUrl.DatabaseName ?? "PortfolioDb");
+        var configuredDatabaseName = configuration["MongoDbSettings:DatabaseName"] ?? "aRevolucaoDosPet";
+        var database = mongoClient.GetDatabase(mongoUrl.DatabaseName ?? configuredDatabaseName);
 
         services.AddSingleton<IMongoClient>(mongoClient);
         services.AddSingleton<IMongoDatabase>(database);

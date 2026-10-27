@@ -51,3 +51,9 @@ C:\Users\eduardo.leite\Documents\Estudo\Github\aRevolucaoDosPet\obj\Release\net1
 C:\Users\eduardo.leite\Documents\Estudo\Github\aRevolucaoDosPet\obj\Release\net10.0\aRevolucaoDosPet.pdb
 C:\Users\eduardo.leite\Documents\Estudo\Github\aRevolucaoDosPet\obj\Release\net10.0\aRevolucaoDosPet.genruntimeconfig.cache
 C:\Users\eduardo.leite\Documents\Estudo\Github\aRevolucaoDosPet\obj\Release\net10.0\ref\aRevolucaoDosPet.dll
+C:\Users\eduardo.leite\Documents\Estudo\Github\aRevolucaoDosPet\bin\Release\net10.0\publish\web.config
+C:\Users\eduardo.leite\Documents\Estudo\Github\aRevolucaoDosPet\bin\Release\net10.0\publish\appsettings.Development.json
+C:\Users\eduardo.leite\Documents\Estudo\Github\aRevolucaoDosPet\bin\Release\net10.0\publish\appsettings.json
+C:\Users\eduardo.leite\Documents\Estudo\Github\aRevolucaoDosPet\bin\Release\net10.0\publish\aRevolucaoDosPet.deps.json
+C:\Users\eduardo.leite\Documents\Estudo\Github\aRevolucaoDosPet\bin\Release\net10.0\publish\aRevolucaoDosPet.runtimeconfig.json
+C:\Users\eduardo.leite\Documents\Estudo\Github\aRevolucaoDosPet\bin\Release\net10.0\publish\aRevolucaoDosPet.staticwebassets.endpoints.json
