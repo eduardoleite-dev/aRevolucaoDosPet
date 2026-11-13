@@ -19,6 +19,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSwaggerConfig();
 builder.Services.AddMongoConfig(builder.Configuration);
+builder.Services.AddCloudinaryConfig(builder.Configuration);
 builder.Services.AddDependencyInjectionConfig();
 builder.Services.AddJwtConfig(builder.Configuration);
 

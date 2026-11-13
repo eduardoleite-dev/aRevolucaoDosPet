@@ -225,6 +225,28 @@ public class UserService : IUserService
         }
     }
 
+    public async Task<UserResponseDto?> UpdateAvatarAsync(string id, string avatarUrl, CancellationToken cancellationToken = default)
+    {
+        if (!ObjectId.TryParse(id, out _) ||
+            !Uri.TryCreate(avatarUrl, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+        {
+            return null;
+        }
+
+        var update = Builders<User>.Update
+            .Set(user => user.AvatarUrl, avatarUrl)
+            .Set(user => user.UpdatedAt, DateTime.UtcNow);
+        var user = await _users.FindOneAndUpdateAsync(
+            Builders<User>.Filter.Eq(existing => existing.Id, id) &
+            Builders<User>.Filter.Ne(existing => existing.Status, UserStatus.DELETED),
+            update,
+            new FindOneAndUpdateOptions<User> { ReturnDocument = ReturnDocument.After },
+            cancellationToken);
+
+        return user is null ? null : ToResponse(user);
+    }
+
     public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default)
     {
         if (!ObjectId.TryParse(id, out _))

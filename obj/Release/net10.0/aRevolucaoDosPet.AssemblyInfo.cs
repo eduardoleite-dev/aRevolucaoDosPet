@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("aRevolucaoDosPet")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1373b1beddcbdeabaab2c5682b0e0ff7da6a2ec")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fe38b36a29dcfd4586999140cca89fa602810ed4")]
 [assembly: System.Reflection.AssemblyProductAttribute("aRevolucaoDosPet")]
 [assembly: System.Reflection.AssemblyTitleAttribute("aRevolucaoDosPet")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

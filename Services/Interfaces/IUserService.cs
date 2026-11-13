@@ -8,6 +8,7 @@ public interface IUserService
     Task<PagedResult<UserResponseDto>> SearchAsync(UserSearchFilter filter, CancellationToken cancellationToken = default);
     Task<UserResponseDto?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
     Task<UserResponseDto?> UpdateAsync(string id, UpdateUserRequest request, CancellationToken cancellationToken = default);
+    Task<UserResponseDto?> UpdateAvatarAsync(string id, string avatarUrl, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default);
 }
 

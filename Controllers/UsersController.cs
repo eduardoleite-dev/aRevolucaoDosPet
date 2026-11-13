@@ -12,10 +12,12 @@ namespace aRevolucaoDosPet.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly ICloudinaryService _cloudinaryService;
 
-    public UsersController(IUserService userService)
+    public UsersController(IUserService userService, ICloudinaryService cloudinaryService)
     {
         _userService = userService;
+        _cloudinaryService = cloudinaryService;
     }
 
     [AllowAnonymous]
@@ -119,6 +121,46 @@ public class UsersController : ControllerBase
         catch (DuplicateUserEmailException)
         {
             return Conflict(new { message = "Já existe um usuário cadastrado com este e-mail." });
+        }
+    }
+
+    [Authorize]
+    [HttpPost("{id}/photo")]
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(51 * 1024 * 1024)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 51 * 1024 * 1024)]
+    [ProducesResponseType<UserResponseDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UploadPhoto(
+        string id,
+        [FromForm] UserPhotoUploadRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!CanAccess(id))
+        {
+            return Forbid();
+        }
+
+        var user = await _userService.GetByIdAsync(id, cancellationToken);
+        if (user is null || user.Status == UserStatus.DELETED.ToString())
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            var upload = await _cloudinaryService.UploadAsync(
+                request.File,
+                $"user_{id}_avatar",
+                cancellationToken);
+            var updatedUser = await _userService.UpdateAvatarAsync(id, upload.Url, cancellationToken);
+            return updatedUser is null ? NotFound() : Ok(updatedUser);
+        }
+        catch (ArgumentException exception)
+        {
+            return BadRequest(new { message = exception.Message });
         }
     }
 

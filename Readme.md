@@ -77,6 +77,9 @@ Exemplo no PowerShell:
 ```powershell
 $env:ConnectionStrings__MongoDB = "mongodb+srv://USUARIO:SENHA@CLUSTER.mongodb.net/aRevolucaoDosPets?retryWrites=true&w=majority"
 $env:JwtSettings__SecretKey = "sua-chave-secreta-forte-e-com-privilégio-apenas-no-servidor"
+$env:CloudinarySettings__CloudName = "seu-cloud-name"
+$env:CloudinarySettings__ApiKey = "sua-api-key"
+$env:CloudinarySettings__ApiSecret = "seu-api-secret"
 $env:ASPNETCORE_ENVIRONMENT = "Development"
 ```
 
@@ -87,6 +90,11 @@ Para configuração no Azure App Service, registre os valores como:
 
 - `ConnectionStrings__MongoDB`
 - `JwtSettings__SecretKey`
+- `CloudinarySettings__CloudName`
+- `CloudinarySettings__ApiKey`
+- `CloudinarySettings__ApiSecret`
+
+O endpoint público `POST /api/Media/upload` recebe `file` e `name` via `multipart/form-data`. O nome aceita de 1 a 100 letras, números, hífens ou sublinhados e é usado como `publicId` no Cloudinary. Aceita imagens JPEG, PNG, WebP e GIF, e vídeos MP4, MOV e WebM de até 50 MB. A resposta contém `url`, `publicId` e `type`, prontos para informar nos campos de mídia de posts, histórias ou diário.
 
 ### 3. Executar a API
 
