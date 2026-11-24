@@ -11,7 +11,6 @@ public record UserResponseDto(
     string? State,
     string Country,
     Models.UserLocation? Location,
-    int AccessLevel,
     string Status,
     DateTime? EmailVerifiedAt,
     DateTime? LastLoginAt,

@@ -14,7 +14,7 @@ public class HeatCyclesController : ControllerBase
 {
     private readonly IHeatCycleService _service;
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
-    private bool IsAdministrator => User.IsInRole(AccessLevel.ADMINISTRADOR.ToString());
+    private bool IsAdministrator => false;
 
     public HeatCyclesController(IHeatCycleService service) => _service = service;
 

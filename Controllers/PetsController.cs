@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using aRevolucaoDosPet.DTOs;
-using aRevolucaoDosPet.Enums;
 using aRevolucaoDosPet.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +17,22 @@ public class PetsController : ControllerBase
         _petService = petService;
     }
 
-    [Authorize(Roles = nameof(AccessLevel.ADMINISTRADOR))]
+    [Authorize]
     [HttpGet]
     [ProducesResponseType<PagedResult<PetResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Search([FromQuery] PetSearchFilter filter, CancellationToken cancellationToken)
     {
         try
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Forbid();
+            }
+
+            filter.OwnerId = userId;
             return Ok(await _petService.SearchAsync(filter, cancellationToken));
         }
         catch (ArgumentException exception)
@@ -42,15 +49,13 @@ public class PetsController : ControllerBase
     public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
     {
         var viewerUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var isAdministrator = User.IsInRole(AccessLevel.ADMINISTRADOR.ToString());
-        var pet = await _petService.GetByIdAsync(id, viewerUserId, isAdministrator, cancellationToken);
+        var pet = await _petService.GetByIdAsync(id, viewerUserId, false, cancellationToken);
         if (pet is null)
         {
             return NotFound();
         }
 
-        var canViewPrivateDetails = isAdministrator ||
-                                    pet.OwnerId == viewerUserId ||
+        var canViewPrivateDetails = pet.OwnerId == viewerUserId ||
                                     pet.CoTutorIds.Contains(viewerUserId ?? string.Empty);
         if (canViewPrivateDetails)
         {
@@ -88,7 +93,7 @@ public class PetsController : ControllerBase
             var pet = await _petService.CreateAsync(
                 request,
                 User.FindFirstValue(ClaimTypes.NameIdentifier),
-                User.IsInRole(AccessLevel.ADMINISTRADOR.ToString()),
+                false,
                 cancellationToken);
             return StatusCode(StatusCodes.Status201Created, pet);
         }
@@ -121,7 +126,7 @@ public class PetsController : ControllerBase
                 id,
                 request,
                 User.FindFirstValue(ClaimTypes.NameIdentifier),
-                User.IsInRole(AccessLevel.ADMINISTRADOR.ToString()),
+                false,
                 cancellationToken);
             return pet is null ? NotFound() : Ok(pet);
         }
@@ -151,7 +156,7 @@ public class PetsController : ControllerBase
             var deleted = await _petService.DeleteAsync(
                 id,
                 User.FindFirstValue(ClaimTypes.NameIdentifier),
-                User.IsInRole(AccessLevel.ADMINISTRADOR.ToString()),
+                false,
                 cancellationToken);
             return deleted ? NoContent() : NotFound();
         }

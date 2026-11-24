@@ -13,7 +13,7 @@ public class PlacesController : ControllerBase
 {
     private readonly IPlaceService _service;
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
-    private bool IsAdministrator => User.IsInRole(AccessLevel.ADMINISTRADOR.ToString());
+    private bool IsAdministrator => false;
 
     public PlacesController(IPlaceService service) => _service = service;
 

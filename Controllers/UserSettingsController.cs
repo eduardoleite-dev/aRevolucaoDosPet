@@ -104,6 +104,5 @@ public class UserSettingsController : ControllerBase
     }
 
     private bool CanAccess(string userId) =>
-        User.IsInRole(AccessLevel.ADMINISTRADOR.ToString()) ||
         User.FindFirstValue(ClaimTypes.NameIdentifier) == userId;
 }

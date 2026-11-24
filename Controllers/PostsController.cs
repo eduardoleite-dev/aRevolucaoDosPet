@@ -19,7 +19,7 @@ public class PostsController : ControllerBase
     }
 
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
-    private bool IsAdministrator => User.IsInRole(AccessLevel.ADMINISTRADOR.ToString());
+    private bool IsAdministrator => false;
 
     [AllowAnonymous]
     [HttpGet]

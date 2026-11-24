@@ -31,7 +31,7 @@ public class PetFollowersController : ControllerBase
         CancellationToken cancellationToken)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var isAdministrator = User.IsInRole(AccessLevel.ADMINISTRADOR.ToString());
+        const bool isAdministrator = false;
         if (!await _petService.CanEditAsync(petId, userId, isAdministrator, cancellationToken: cancellationToken))
         {
             return Forbid();
@@ -109,7 +109,7 @@ public class PetFollowersController : ControllerBase
                 petId,
                 followerPetId,
                 User.FindFirstValue(ClaimTypes.NameIdentifier),
-                User.IsInRole(AccessLevel.ADMINISTRADOR.ToString()),
+                false,
                 cancellationToken);
             return StatusCode(StatusCodes.Status201Created, follower);
         }
@@ -147,7 +147,7 @@ public class PetFollowersController : ControllerBase
                 petId,
                 followerPetId,
                 User.FindFirstValue(ClaimTypes.NameIdentifier),
-                User.IsInRole(AccessLevel.ADMINISTRADOR.ToString()),
+                false,
                 cancellationToken);
             return removed ? NoContent() : NotFound();
         }

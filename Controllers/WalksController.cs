@@ -14,7 +14,7 @@ public class WalksController : ControllerBase
 {
     private readonly IWalkService _service;
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
-    private bool IsAdministrator => User.IsInRole(AccessLevel.ADMINISTRADOR.ToString());
+    private bool IsAdministrator => false;
 
     public WalksController(IWalkService service) => _service = service;
 

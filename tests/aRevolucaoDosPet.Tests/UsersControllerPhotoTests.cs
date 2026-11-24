@@ -80,7 +80,6 @@ public class UsersControllerPhotoTests
         null,
         "BR",
         null,
-        0,
         "ACTIVE",
         null,
         null,

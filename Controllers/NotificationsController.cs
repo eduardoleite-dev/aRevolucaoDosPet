@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using aRevolucaoDosPet.DTOs;
-using aRevolucaoDosPet.Enums;
 using aRevolucaoDosPet.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,7 @@ public class NotificationsController : ControllerBase
 {
     private readonly INotificationService _service;
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
-    private bool IsAdministrator => User.IsInRole(AccessLevel.ADMINISTRADOR.ToString());
+    private bool IsAdministrator => false;
 
     public NotificationsController(INotificationService service) => _service = service;
 
@@ -39,17 +38,12 @@ public class NotificationsController : ControllerBase
         catch (RecordPermissionException) { return Forbid(); }
     }
 
-    [Authorize(Roles = nameof(AccessLevel.ADMINISTRADOR))]
+    [Authorize]
     [HttpPost]
-    [ProducesResponseType<NotificationResponseDto>(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Create([FromBody] CreateNotificationRequest request, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public IActionResult Create([FromBody] CreateNotificationRequest request, CancellationToken cancellationToken)
     {
-        try { return StatusCode(StatusCodes.Status201Created, await _service.CreateAsync(request, cancellationToken)); }
-        catch (ArgumentException exception) { return BadRequest(new { message = exception.Message }); }
-        catch (NotificationUserNotFoundException) { return NotFound(new { message = "Usuário destinatário não encontrado ou inativo." }); }
-        catch (NotificationPetNotFoundException) { return NotFound(new { message = "Pet relacionado não encontrado." }); }
+        return Forbid();
     }
 
     [HttpPost("{id}/read")]

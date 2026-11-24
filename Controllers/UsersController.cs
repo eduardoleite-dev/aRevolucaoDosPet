@@ -45,28 +45,14 @@ public class UsersController : ControllerBase
         }
     }
 
-    [Authorize(Roles = nameof(AccessLevel.ADMINISTRADOR))]
+    [Authorize]
     [HttpGet]
-    [ProducesResponseType<PagedResult<UserResponseDto>>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Search(
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public IActionResult Search(
         [FromQuery] UserSearchFilter filter,
         CancellationToken cancellationToken)
     {
-        if (filter.Longitude.HasValue != filter.Latitude.HasValue)
-        {
-            return BadRequest(new { message = "Informe longitude e latitude juntas." });
-        }
-
-        try
-        {
-            var result = await _userService.SearchAsync(filter, cancellationToken);
-            return Ok(result);
-        }
-        catch (ArgumentException exception)
-        {
-            return BadRequest(new { message = exception.Message });
-        }
+        return Forbid();
     }
 
     [Authorize]
@@ -82,7 +68,7 @@ public class UsersController : ControllerBase
         }
 
         var user = await _userService.GetByIdAsync(id, cancellationToken);
-        if (user is null || (user.Status == UserStatus.DELETED.ToString() && !IsAdministrator))
+        if (user is null || user.Status == UserStatus.DELETED.ToString())
         {
             return NotFound();
         }
@@ -181,8 +167,6 @@ public class UsersController : ControllerBase
             : NotFound();
     }
 
-    private bool IsAdministrator => User.IsInRole(AccessLevel.ADMINISTRADOR.ToString());
-
     private bool CanAccess(string id) =>
-        IsAdministrator || User.FindFirstValue(ClaimTypes.NameIdentifier) == id;
+        User.FindFirstValue(ClaimTypes.NameIdentifier) == id;
 }

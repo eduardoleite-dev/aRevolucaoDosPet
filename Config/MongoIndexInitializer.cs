@@ -70,10 +70,8 @@ public class MongoIndexInitializer : IHostedService
                 Builders<User>.IndexKeys.Geo2DSphere(user => user.Location),
                 new CreateIndexOptions { Name = "ix_users_location_2dsphere" }),
             new CreateIndexModel<User>(
-                Builders<User>.IndexKeys
-                    .Ascending(user => user.Status)
-                    .Ascending(user => user.AccessLevel),
-                new CreateIndexOptions { Name = "ix_users_status_access_level" })
+                Builders<User>.IndexKeys.Ascending(user => user.Status),
+                new CreateIndexOptions { Name = "ix_users_status" })
         };
 
         await _users.Indexes.CreateManyAsync(indexes, cancellationToken);

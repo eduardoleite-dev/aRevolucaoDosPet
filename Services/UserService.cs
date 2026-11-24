@@ -40,7 +40,6 @@ public class UserService : IUserService
             State = NormalizeOptional(request.State),
             Country = request.Country.Trim().ToUpperInvariant(),
             Location = CreateLocation(request.Location),
-            AccessLevel = AccessLevel.TUTOR,
             Status = UserStatus.ACTIVE,
             CreatedAt = now,
             UpdatedAt = now
@@ -81,11 +80,6 @@ public class UserService : IUserService
             }
 
             filters.Add(builder.Eq(user => user.Id, filter.Id));
-        }
-
-        if (filter.AccessLevel.HasValue)
-        {
-            filters.Add(builder.Eq(user => user.AccessLevel, filter.AccessLevel.Value));
         }
 
         if (filter.Status.HasValue)
@@ -336,7 +330,6 @@ public class UserService : IUserService
         user.State,
         user.Country,
         user.Location,
-        (int)user.AccessLevel,
         user.Status.ToString(),
         user.EmailVerifiedAt,
         user.LastLoginAt,

@@ -15,7 +15,7 @@ public class ExpensesController : ControllerBase
 {
     private readonly IExpenseService _expenseService;
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
-    private bool IsAdministrator => User.IsInRole(AccessLevel.ADMINISTRADOR.ToString());
+    private bool IsAdministrator => false;
 
     public ExpensesController(IExpenseService expenseService) => _expenseService = expenseService;
 

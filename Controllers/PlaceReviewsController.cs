@@ -64,7 +64,7 @@ public class PlaceReviewsController : ControllerBase
         try
         {
             var result = await _service.UpdateAsync(id, request, User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
-                User.IsInRole(nameof(Enums.AccessLevel.ADMINISTRADOR)), cancellationToken);
+                false, cancellationToken);
             return result is null ? NotFound() : Ok(result);
         }
         catch (ArgumentException exception) { return BadRequest(new { message = exception.Message }); }
@@ -82,7 +82,7 @@ public class PlaceReviewsController : ControllerBase
         try
         {
             return await _service.DeleteAsync(id, User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
-                User.IsInRole(nameof(Enums.AccessLevel.ADMINISTRADOR)), cancellationToken) ? NoContent() : NotFound();
+                false, cancellationToken) ? NoContent() : NotFound();
         }
         catch (PlaceReviewPermissionException) { return Forbid(); }
     }

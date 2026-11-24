@@ -31,7 +31,6 @@ public class UserSearchFilter
     [Range(0.01, 20_000_000)]
     public double? RadiusMeters { get; set; }
 
-    public AccessLevel? AccessLevel { get; set; }
     public UserStatus? Status { get; set; }
     public bool? EmailVerified { get; set; }
     public bool? HasLoggedIn { get; set; }

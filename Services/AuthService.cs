@@ -36,7 +36,7 @@ public class AuthService : IAuthService
             string.Equals(login, "usuarioMaster", StringComparison.OrdinalIgnoreCase) &&
             password == "62270208")
         {
-            return GenerateJwtToken("usuarioMaster", "Master", AccessLevel.ADMINISTRADOR);
+            return GenerateJwtToken("usuarioMaster", "Master");
         }
 
         var normalizedEmail = login.ToLowerInvariant();
@@ -55,10 +55,10 @@ public class AuthService : IAuthService
             .Set(u => u.UpdatedAt, now);
         await _usersCollection.UpdateOneAsync(u => u.Id == user.Id, update);
 
-        return GenerateJwtToken(user.Name, user.Id, user.AccessLevel);
+        return GenerateJwtToken(user.Name, user.Id);
     }
 
-    private LoginResponseDto GenerateJwtToken(string username, string userId, AccessLevel accessLevel)
+    private LoginResponseDto GenerateJwtToken(string username, string userId)
     {
         var secretKey = _configuration["JwtSettings__SecretKey"] 
                         ?? _configuration["JwtSettings:SecretKey"] 
@@ -74,8 +74,7 @@ public class AuthService : IAuthService
             Subject = new ClaimsIdentity(new[] 
             { 
                 new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.NameIdentifier, userId),
-                new Claim(ClaimTypes.Role, accessLevel.ToString())
+                new Claim(ClaimTypes.NameIdentifier, userId)
             }),
             Expires = expiresAt,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
