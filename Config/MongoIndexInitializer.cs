@@ -13,7 +13,6 @@ public class MongoIndexInitializer : IHostedService
     private readonly IMongoCollection<Post> _posts;
     private readonly IMongoCollection<PostReaction> _postReactions;
     private readonly IMongoCollection<Comment> _comments;
-    private readonly IMongoCollection<Story> _stories;
     private readonly IMongoCollection<Vaccine> _vaccines;
     private readonly IMongoCollection<Appointment> _appointments;
     private readonly IMongoCollection<WeightLog> _weightLogs;
@@ -36,7 +35,6 @@ public class MongoIndexInitializer : IHostedService
         _posts = database.GetCollection<Post>("Posts");
         _postReactions = database.GetCollection<PostReaction>("PostReactions");
         _comments = database.GetCollection<Comment>("Comments");
-        _stories = database.GetCollection<Story>("Stories");
         _vaccines = database.GetCollection<Vaccine>("Vaccines");
         _appointments = database.GetCollection<Appointment>("Appointments");
         _weightLogs = database.GetCollection<WeightLog>("WeightLogs");
@@ -174,17 +172,6 @@ public class MongoIndexInitializer : IHostedService
                 new CreateIndexOptions { Name = "ix_comments_parent_id" })
         };
         await _comments.Indexes.CreateManyAsync(commentIndexes, cancellationToken);
-
-        var storyIndexes = new[]
-        {
-            new CreateIndexModel<Story>(
-                Builders<Story>.IndexKeys.Ascending(story => story.PetId),
-                new CreateIndexOptions { Name = "ix_stories_pet_id" }),
-            new CreateIndexModel<Story>(
-                Builders<Story>.IndexKeys.Ascending(story => story.ExpiresAt),
-                new CreateIndexOptions { Name = "ttl_stories_expires_at", ExpireAfter = TimeSpan.Zero })
-        };
-        await _stories.Indexes.CreateManyAsync(storyIndexes, cancellationToken);
 
         var vaccineIndexes = new[]
         {

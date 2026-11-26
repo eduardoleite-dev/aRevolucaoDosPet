@@ -16,7 +16,6 @@ public static class DependencyInjectionConfig
         services.AddScoped<IPostService, PostService>();
         services.AddScoped<IPostReactionService, PostReactionService>();
         services.AddScoped<ICommentService, CommentService>();
-        services.AddScoped<IStoryService, StoryService>();
         services.AddScoped<IVaccineService, VaccineService>();
         services.AddScoped<IAppointmentService, AppointmentService>();
         services.AddScoped<IWeightLogService, WeightLogService>();
