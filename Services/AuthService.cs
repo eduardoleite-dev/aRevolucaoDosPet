@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using aRevolucaoDosPet.DTOs;
 using aRevolucaoDosPet.Enums;
@@ -14,13 +13,11 @@ namespace aRevolucaoDosPet.Services;
 public class AuthService : IAuthService
 {
     private readonly IConfiguration _configuration;
-    private readonly IHostEnvironment _environment;
     private readonly IMongoCollection<User> _usersCollection;
 
-    public AuthService(IConfiguration configuration, IMongoDatabase database, IHostEnvironment environment)
+    public AuthService(IConfiguration configuration, IMongoDatabase database)
     {
         _configuration = configuration;
-        _environment = environment;
         _usersCollection = database.GetCollection<User>("Users");
     }
 
@@ -32,13 +29,6 @@ public class AuthService : IAuthService
         }
 
         var login = username.Trim();
-        if (_environment.IsDevelopment() &&
-            string.Equals(login, "usuarioMaster", StringComparison.OrdinalIgnoreCase) &&
-            password == "62270208")
-        {
-            return GenerateJwtToken("usuarioMaster", "Master");
-        }
-
         var normalizedEmail = login.ToLowerInvariant();
         var user = await _usersCollection.Find(u =>
             (u.Email == normalizedEmail || u.Name == login) && u.Status == UserStatus.ACTIVE)
@@ -60,9 +50,13 @@ public class AuthService : IAuthService
 
     private LoginResponseDto GenerateJwtToken(string username, string userId)
     {
-        var secretKey = _configuration["JwtSettings__SecretKey"] 
-                        ?? _configuration["JwtSettings:SecretKey"] 
-                        ?? "ChavePadraoSuperSecretaFallback123456789";
+        var secretKey = _configuration["JwtSettings:SecretKey"] 
+                        ?? _configuration["JwtSettings__SecretKey"];
+
+        if (string.IsNullOrWhiteSpace(secretKey))
+        {
+            throw new InvalidOperationException("A chave secreta JWT não foi configurada em JwtSettings:SecretKey ou JwtSettings__SecretKey.");
+        }
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(secretKey);

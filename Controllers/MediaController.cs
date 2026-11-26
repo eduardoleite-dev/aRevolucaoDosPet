@@ -18,7 +18,6 @@ public class MediaController : ControllerBase
     }
 
     [HttpPost("upload")]
-    [AllowAnonymous]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(51 * 1024 * 1024)]
     [RequestFormLimits(MultipartBodyLengthLimit = 51 * 1024 * 1024)]

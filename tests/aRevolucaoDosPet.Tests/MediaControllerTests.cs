@@ -11,12 +11,12 @@ namespace aRevolucaoDosPet.Tests;
 public class MediaControllerTests
 {
     [Fact]
-    public void Upload_AllowsAnonymousRequests()
+    public void Upload_DoesNotAllowAnonymousRequests()
     {
         var method = typeof(MediaController).GetMethod(nameof(MediaController.Upload));
 
         Assert.NotNull(method);
-        Assert.NotNull(Attribute.GetCustomAttribute(method, typeof(AllowAnonymousAttribute)));
+        Assert.Null(Attribute.GetCustomAttribute(method, typeof(AllowAnonymousAttribute)));
     }
 
     [Fact]

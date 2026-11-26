@@ -9,8 +9,12 @@ public static class JwtConfig
     public static IServiceCollection AddJwtConfig(this IServiceCollection services, IConfiguration configuration)
     {
         var secretKey = configuration["JwtSettings:SecretKey"] 
-                        ?? configuration["JwtSettings__SecretKey"]
-                        ?? throw new InvalidOperationException("A chave secreta JWT não foi configurada em JwtSettings:SecretKey ou JwtSettings__SecretKey.");
+                        ?? configuration["JwtSettings__SecretKey"];
+
+        if (string.IsNullOrWhiteSpace(secretKey))
+        {
+            throw new InvalidOperationException("A chave secreta JWT não foi configurada em JwtSettings:SecretKey ou JwtSettings__SecretKey.");
+        }
 
         var key = Encoding.ASCII.GetBytes(secretKey);
 
